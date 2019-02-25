@@ -10,10 +10,21 @@ conn.onerror = function(e) {
 };
 
 conn.onmessage = function(e) {
-    let $el = $('li.messages-menu ul.menu li:first').clone();
-    $el.find('p').text(e.data);
-    $el.find('h4').text('Websocket user');
-    $el.prependTo('li.messages-menu ul.menu');
+    let $menu = $('.messages-menu .menu');
+    
+    $menu.append(`<li>
+                    <a href="#">
+                        <div class="pull-left">
+                            <img src="/img/user4-128x128.jpg" class="img-circle"
+                                 alt="user image"/>
+                        </div>
+                        <h4>
+                            Websocket user
+                            <small><i class="fa fa-clock-o"></i> Today</small>
+                        </h4>
+                        <p>${e.data}</p>
+                    </a>
+                </li>`);
     
     let cnt = $('li.messages-menu ul.menu li').length;
     $('li.messages-menu span.label-success').text(cnt);
