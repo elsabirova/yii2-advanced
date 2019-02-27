@@ -20,12 +20,25 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ *
+ * @property Task[] $createdTasks
+ * @property Task[] $updatedTasks
+ * @property Task[] $executableTasks
+ * @property Project[] $createdProjects
+ * @property Project[] $updatedProjects
+ * @property ProjectUser[] $projectUsers
  */
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
 
+    const RELATION_CREATED_TASKS    = 'createdTasks';
+    const RELATION_UPDATED_TASKS    = 'updatedTasks';
+    const RELATION_EXECUTABLE_TASKS = 'executableTasks';
+    const RELATION_CREATED_PROJECTS    = 'createdProjects';
+    const RELATION_UPDATED_PROJECTS    = 'updatedProjects';
+    const RELATION_PROJECT_USERS    = 'projectUsers';
 
     /**
      * {@inheritdoc}
@@ -69,7 +82,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return static::findOne(['access_token' => $token]);
     }
 
     /**
@@ -185,5 +198,54 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    //Relations
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreatedTasks()
+    {
+        return $this->hasMany(Task::class, ['creator_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUpdatedTasks()
+    {
+        return $this->hasMany(Task::class, ['updater_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutableTasks()
+    {
+        return $this->hasMany(Task::class, ['executor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreatedProjects()
+    {
+        return $this->hasMany(Project::class, ['creator_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUpdatedProjects()
+    {
+        return $this->hasMany(Project::class, ['updater_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProjectUsers()
+    {
+        return $this->hasMany(ProjectUser::class, ['user_id' => 'id']);
     }
 }

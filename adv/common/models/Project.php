@@ -1,8 +1,6 @@
 <?php
-
 namespace common\models;
 
-use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 
@@ -20,10 +18,16 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property User $creator
  * @property User $updater
+ * @property Task $tasks
  * @property ProjectUser[] $projectUsers
  */
 class Project extends \yii\db\ActiveRecord
 {
+    const RELATION_CREATOR          = 'creator';
+    const RELATION_UPDATER          = 'updater';
+    const RELATION_TASKS            = 'tasks';
+    const RELATION_PROJECT_USERS    = 'projectUsers';
+
     /**
      * {@inheritdoc}
      */
@@ -80,7 +84,7 @@ class Project extends \yii\db\ActiveRecord
      */
     public function getCreator()
     {
-        return $this->hasOne(User::className(), ['id' => 'creator_id']);
+        return $this->hasOne(User::class, ['id' => 'creator_id']);
     }
 
     /**
@@ -88,7 +92,7 @@ class Project extends \yii\db\ActiveRecord
      */
     public function getUpdater()
     {
-        return $this->hasOne(User::className(), ['id' => 'updater_id']);
+        return $this->hasOne(User::class, ['id' => 'updater_id']);
     }
 
     /**
@@ -96,7 +100,15 @@ class Project extends \yii\db\ActiveRecord
      */
     public function getProjectUsers()
     {
-        return $this->hasMany(ProjectUser::className(), ['project_id' => 'id']);
+        return $this->hasMany(ProjectUser::class, ['project_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTasks()
+    {
+        return $this->hasMany(Task::class, ['project_id' => 'id']);
     }
 
     /**
