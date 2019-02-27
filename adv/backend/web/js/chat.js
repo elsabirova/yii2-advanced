@@ -19,8 +19,7 @@ conn.onmessage = function(e) {
                                  alt="user image"/>
                         </div>
                         <h4>
-                            Websocket user
-                            <small><i class="fa fa-clock-o"></i> Today</small>
+                            <small><i class="fa fa-clock-o"></i> Today </small>
                         </h4>
                         <p>${e.data}</p>
                     </a>
@@ -37,6 +36,6 @@ conn.onmessage = function(e) {
 $(document).ready(function () {
     $('.chat-message-send').on('click', function (e) {
         let msg = $('.chat-message').val();
-        conn.send(msg);
+        conn.send(wsUser + ': ' + msg);
     });
 });
