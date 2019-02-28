@@ -18,7 +18,7 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property User $creator
  * @property User $updater
- * @property Task $tasks
+ * @property Task[] $tasks
  * @property ProjectUser[] $projectUsers
  */
 class Project extends \yii\db\ActiveRecord
