@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="user-index">
 
     <?php Pjax::begin(); ?>
-
+    <?php  //echo $this->render('_search', ['model' => $searchModel]); ?>
     <p>
         <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -41,15 +41,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'created_at',
-                'format' => ['date', 'php:d/m/Y H:i:s']
+                'format' => ['date', 'php:d-m-Y H:i:s'],
+                'filter' =>  \dosamigos\datepicker\DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'date_from',
+                    'attributeTo' => 'date_to',
+                    'clientOptions' => [
+                        'autoclose' => true,
+                        'format' => 'dd-mm-yyyy'
+                    ]
+                ])
             ],
             [
                 'attribute' => 'updated_at',
-                'format' => ['date', 'php:d/m/Y H:i:s']
+                'format' => ['date', 'php:d-m-Y H:i:s']
             ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+
     <?php Pjax::end(); ?>
 </div>

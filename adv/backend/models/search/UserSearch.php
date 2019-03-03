@@ -11,15 +11,17 @@ use common\models\User;
  */
 class UserSearch extends User
 {
+    public $date_from;
+    public $date_to;
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at'], 'integer'],
-            /*[['created_at', 'updated_at'], 'datetime'],*/
-            [['username', 'email'], 'safe'],
+            [['id', 'status'], 'integer'],
+            [['username', 'email', 'created_at', 'updated_at', 'date_from', 'date_to'], 'safe'],
         ];
     }
 
@@ -60,10 +62,12 @@ class UserSearch extends User
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'status' => $this->status
         ]);
+
+        if(isset($this->date_from) && isset($this->date_to)) {
+            $query->andFilterWhere(['between', 'created_at', strtotime($this->date_from), strtotime($this->date_to)]);
+        }
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'email', $this->email]);
