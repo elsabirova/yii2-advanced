@@ -2,6 +2,7 @@
 
 namespace backend\models\search;
 
+use kartik\daterange\DateRangeBehavior;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -11,8 +12,29 @@ use common\models\User;
  */
 class UserSearch extends User
 {
-    public $date_from;
-    public $date_to;
+    public $createTimeStart;
+    public $createTimeEnd;
+
+    public $updatedTimeStart;
+    public $updatedTimeEnd;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'created_at',
+                'dateStartAttribute' => 'createTimeStart',
+                'dateEndAttribute' => 'createTimeEnd',
+            ],
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'updated_at',
+                'dateStartAttribute' => 'updatedTimeStart',
+                'dateEndAttribute' => 'updatedTimeEnd',
+            ]
+        ];
+    }
 
     /**
      * {@inheritdoc}
@@ -21,7 +43,8 @@ class UserSearch extends User
     {
         return [
             [['id', 'status'], 'integer'],
-            [['username', 'email', 'created_at', 'updated_at', 'date_from', 'date_to'], 'safe'],
+            [['username', 'email', 'created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
         ];
     }
 
@@ -65,12 +88,10 @@ class UserSearch extends User
             'status' => $this->status
         ]);
 
-        if(isset($this->date_from) && isset($this->date_to)) {
-            $query->andFilterWhere(['between', 'created_at', strtotime($this->date_from), strtotime($this->date_to)]);
-        }
-
         $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'email', $this->email]);
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['between', 'created_at', $this->createTimeStart, $this->createTimeEnd])
+            ->andFilterWhere(['between', 'updated_at', $this->updatedTimeStart, $this->updatedTimeEnd]);
 
         return $dataProvider;
     }

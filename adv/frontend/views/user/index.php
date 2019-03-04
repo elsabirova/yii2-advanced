@@ -39,11 +39,35 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'created_at',
-                'format' => ['date', 'php:d/m/Y H:i:s']
+                'format' => ['date', 'php:d-m-Y H:i:s'],
+                'filter' =>  \kartik\daterange\DateRangePicker::widget([
+                    'model'=>$searchModel,
+                    'attribute'=>'created_at',
+                    'presetDropdown'=>true,
+                    'hideInput'=>true,
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>[
+                            'format'=>'d-m-Y'
+                        ]
+                    ]
+                ])
             ],
             [
                 'attribute' => 'updated_at',
-                'format' => ['date', 'php:d/m/Y H:i:s']
+                'format' => ['date', 'php:d-m-Y H:i:s'],
+                'filter' =>  \kartik\daterange\DateRangePicker::widget([
+                    'model'=>$searchModel,
+                    'attribute'=>'updated_at',
+                    'presetDropdown'=>true,
+                    'hideInput'=>true,
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>[
+                            'format'=>'d-m-Y'
+                        ]
+                    ]
+                ])
             ],
 
             [

@@ -2,6 +2,7 @@
 
 namespace frontend\models\search;
 
+use kartik\daterange\DateRangeBehavior;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -11,14 +12,39 @@ use common\models\User;
  */
 class UserSearch extends User
 {
+    public $createTimeStart;
+    public $createTimeEnd;
+
+    public $updatedTimeStart;
+    public $updatedTimeEnd;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'created_at',
+                'dateStartAttribute' => 'createTimeStart',
+                'dateEndAttribute' => 'createTimeEnd',
+            ],
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'updated_at',
+                'dateStartAttribute' => 'updatedTimeStart',
+                'dateEndAttribute' => 'updatedTimeEnd',
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'password_reset_token', 'access_token', 'email', 'avatar'], 'safe'],
+            [['id', 'status'], 'integer'],
+            [['username', 'email', 'created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
         ];
     }
 
@@ -59,18 +85,13 @@ class UserSearch extends User
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'status' => $this->status
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
-            ->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token])
-            ->andFilterWhere(['like', 'access_token', $this->access_token])
             ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'avatar', $this->avatar]);
+            ->andFilterWhere(['between', 'created_at', $this->createTimeStart, $this->createTimeEnd])
+            ->andFilterWhere(['between', 'updated_at', $this->updatedTimeStart, $this->updatedTimeEnd]);
 
         return $dataProvider;
     }
