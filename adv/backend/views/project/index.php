@@ -1,5 +1,6 @@
 <?php
-
+use kartik\daterange\DateRangePicker;
+use common\models\Project;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -12,7 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="project-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -24,17 +24,52 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
             'id',
             'title',
             'description:ntext',
-            'active',
-            'creator_id',
-            //'updater_id',
-            //'created_at',
-            //'updated_at',
-
+            [
+                'attribute' => 'active',
+                'filter' => Project::STATUS_LABELS,
+                'value' => function(Project $model) {
+                    return Project::STATUS_LABELS[$model->active];
+                }
+            ],
+            'creator.username',
+            'updater.username',
+            [
+                'attribute' => 'created_at',
+                'format' => ['datetime'],
+                'filter' =>  DateRangePicker::widget([
+                    //http://demos.krajee.com/date-range
+                    'model'=>$searchModel,
+                    'attribute'=>'created_at',
+                    'presetDropdown'=>true,
+                    'hideInput'=>true,
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>[
+                            'format'=>'d-m-Y'
+                        ]
+                    ]
+                ])
+            ],
+            [
+                'attribute' => 'updated_at',
+                'format' => ['datetime'],
+                'filter' =>  DateRangePicker::widget([
+                    //http://demos.krajee.com/date-range
+                    'model'=>$searchModel,
+                    'attribute'=>'updated_at',
+                    'presetDropdown'=>true,
+                    'hideInput'=>true,
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'locale'=>[
+                            'format'=>'d-m-Y'
+                        ]
+                    ]
+                ])
+            ],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

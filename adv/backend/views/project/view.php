@@ -1,5 +1,5 @@
 <?php
-
+use common\models\Project;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -12,8 +12,6 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="project-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
@@ -32,11 +30,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
-            'active',
-            'creator_id',
-            'updater_id',
-            'created_at',
-            'updated_at',
+            [
+                'attribute' => 'active',
+                'value' => function(Project $model) {
+                    return Project::STATUS_LABELS[$model->active];
+                }
+            ],
+            'creator.username',
+            'updater.username',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

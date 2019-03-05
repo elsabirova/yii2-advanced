@@ -1,8 +1,8 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
+use common\models\User;
 use common\models\Project;
 use backend\models\search\ProjectSearch;
 use yii\web\Controller;
@@ -85,14 +85,27 @@ class ProjectController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $listUsers = User::find()->select('username')->indexBy('id')->column();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($this->loadModel($model) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'listUsers' => $listUsers,
         ]);
+    }
+
+    private function loadModel(Project $model) {
+        $data = Yii::$app->request->post($model->formName());
+        $projectUsers = $data[Project::RELATION_PROJECT_USERS];
+
+        if($projectUsers !== null) {
+            $model->projectUsers = $projectUsers === '' ? [] : $projectUsers;
+        }
+
+        return $model->load(Yii::$app->request->post());
     }
 
     /**

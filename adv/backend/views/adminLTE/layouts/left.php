@@ -8,6 +8,9 @@
                 'items' => [
                     ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
                     ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
+                    ['label' => 'Users', 'url' => ['/user/index']],
+                    ['label' => 'Projects', 'url' => ['/project/index']],
+                    ['label' => 'Tasks', 'url' => ['/task/index']],
                     ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                     [

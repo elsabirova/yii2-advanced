@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 
@@ -23,6 +24,14 @@ use yii\behaviors\TimestampBehavior;
  */
 class Project extends \yii\db\ActiveRecord
 {
+    const STATUS_NOT_ACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUSES = [self::STATUS_ACTIVE, self::STATUS_NOT_ACTIVE];
+    const STATUS_LABELS = [
+        self::STATUS_ACTIVE     => 'Yes',
+        self::STATUS_NOT_ACTIVE    => 'No'
+    ];
+
     const RELATION_CREATOR          = 'creator';
     const RELATION_UPDATER          = 'updater';
     const RELATION_TASKS            = 'tasks';
@@ -44,6 +53,12 @@ class Project extends \yii\db\ActiveRecord
                 'createdByAttribute' => 'creator_id',
                 'updatedByAttribute' => 'updater_id',
             ],
+            'saveRelations' => [
+                'class'     => SaveRelationsBehavior::class,
+                'relations' => [
+                    self::RELATION_PROJECT_USERS
+                ],
+            ],
         ];
     }
 
@@ -55,7 +70,8 @@ class Project extends \yii\db\ActiveRecord
         return [
             [['title', 'description'], 'required'],
             [['description'], 'string'],
-            [['active', 'creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
+            [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
+            ['active', 'in', 'range' => self::STATUSES],
             [['title'], 'string', 'max' => 255],
             [['creator_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['creator_id' => 'id']],
             [['updater_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updater_id' => 'id']],
@@ -68,14 +84,11 @@ class Project extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'active' => 'Active',
-            'creator_id' => 'Creator ID',
-            'updater_id' => 'Updater ID',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'title' => 'Name',
+            'creator.username' => 'Creator',
+            'updater.username' => 'Updater',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
         ];
     }
 
