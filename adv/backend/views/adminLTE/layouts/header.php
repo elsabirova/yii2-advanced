@@ -59,7 +59,7 @@ use common\models\User;
                             <div class="pull-left">
                                 <?= Html::a(
                                         'Profile',
-                                        ['view', 'id' => Yii::$app->user->identity->id],
+                                        ['user/view', 'id' => Yii::$app->user->identity->id],
                                         ['class' => 'btn btn-default btn-flat']) ?>
                             </div>
                             <div class="pull-right">

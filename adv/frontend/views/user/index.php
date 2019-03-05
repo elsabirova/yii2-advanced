@@ -1,5 +1,6 @@
 <?php
 use common\models\User;
+use kartik\daterange\DateRangePicker;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -14,7 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -39,8 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'created_at',
-                'format' => ['date', 'php:d-m-Y H:i:s'],
-                'filter' =>  \kartik\daterange\DateRangePicker::widget([
+                'format' => ['datetime'],
+                'filter' =>  DateRangePicker::widget([
                     'model'=>$searchModel,
                     'attribute'=>'created_at',
                     'presetDropdown'=>true,
@@ -55,8 +55,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'updated_at',
-                'format' => ['date', 'php:d-m-Y H:i:s'],
-                'filter' =>  \kartik\daterange\DateRangePicker::widget([
+                'format' => ['datetime'],
+                'filter' =>  DateRangePicker::widget([
                     'model'=>$searchModel,
                     'attribute'=>'updated_at',
                     'presetDropdown'=>true,

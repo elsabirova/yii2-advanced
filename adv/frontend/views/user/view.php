@@ -34,14 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     return User::STATUS_LABELS[$model->status];
                 }
             ],
-            [
-                'attribute' => 'created_at',
-                'format' => ['date', 'php:d/m/Y H:i:s']
-            ],
-            [
-                'attribute' => 'updated_at',
-                'format' => ['date', 'php:d/m/Y H:i:s']
-            ],
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 

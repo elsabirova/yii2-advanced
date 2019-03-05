@@ -1,4 +1,5 @@
 <?php
+use kartik\daterange\DateRangePicker;
 use common\models\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -41,8 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'created_at',
-                'format' => ['date', 'php:d-m-Y H:i:s'],
-                'filter' =>  \kartik\daterange\DateRangePicker::widget([
+                'format' => ['datetime'],
+                'filter' =>  DateRangePicker::widget([
                     'model'=>$searchModel,
                     'attribute'=>'created_at',
                     'presetDropdown'=>true,
@@ -57,8 +58,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'updated_at',
-                'format' => ['date', 'php:d-m-Y H:i:s'],
-                'filter' =>  \kartik\daterange\DateRangePicker::widget([
+                'format' => ['datetime'],
+                'filter' =>  DateRangePicker::widget([
                     'model'=>$searchModel,
                     'attribute'=>'updated_at',
                     'presetDropdown'=>true,
