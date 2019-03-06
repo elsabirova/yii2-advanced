@@ -32,6 +32,9 @@ class ProjectUser extends \yii\db\ActiveRecord
         self::ROLE_TESTER       => 'Tester',
     ];
 
+    const RELATION_PROJECT  = 'project';
+    const RELATION_USER  = 'user';
+
     /**
      * {@inheritdoc}
      */
@@ -60,10 +63,10 @@ class ProjectUser extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'project_id' => 'Project ID',
-            'user_id' => 'User ID',
-            'role' => 'Role',
+            'user.username' => 'Name',
+            'user.email' => 'Email',
+            'user.created_at' => 'Created at',
+            'user.updated_at' => 'Updated at',
         ];
     }
 

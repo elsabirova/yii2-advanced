@@ -1,7 +1,10 @@
 <?php
 use common\models\Project;
+use common\models\ProjectUser;
+use common\models\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Project */
@@ -42,5 +45,31 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_at:datetime',
         ],
     ]) ?>
+
+    <h3>Users in project</h3>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            'user.username',
+            [
+                'attribute' => 'avatar',
+                'format' => 'html',
+                'value' => function(ProjectUser $model) {
+                    return Html::img($model->user->getThumbUploadUrl('avatar', User::AVATAR_ICO), ['class' => 'img-thumbnail']);
+                }
+            ],
+            'role',
+            'user.email:email',
+            [
+                'attribute' => 'status',
+                'value' => function(ProjectUser $model) {
+                    return User::STATUS_LABELS[$model->user->status];
+                }
+            ],
+            'user.created_at:datetime',
+            'user.updated_at:datetime'
+        ],
+    ]); ?>
 
 </div>
