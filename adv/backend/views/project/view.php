@@ -8,6 +8,7 @@ use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Project */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Projects', 'url' => ['index']];
