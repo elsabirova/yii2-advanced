@@ -54,7 +54,7 @@ class ProjectController extends Controller
      */
     public function actionView($id)
     {
-        $query = ProjectUser::find()->where(['project_id' => $id])->innerJoinWith(ProjectUser::RELATION_USER);
+        $query = $this->findModel($id)->getProjectUsers();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
