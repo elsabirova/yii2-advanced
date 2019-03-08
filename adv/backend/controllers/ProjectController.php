@@ -1,7 +1,6 @@
 <?php
 namespace backend\controllers;
 
-use common\models\ProjectUser;
 use Yii;
 use common\models\User;
 use common\models\Project;
@@ -87,15 +86,23 @@ class ProjectController extends Controller
      * Updates an existing Project model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
-     * @return mixed
+     * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
         $listUsers = User::find()->select('username')->indexBy('id')->column();
+        $projectUsersRoles = $model->getExecutorsRoles();
 
         if ($this->loadModel($model) && $model->save()) {
+            if($diff = array_diff_assoc($model->getExecutorsRoles(), $projectUsersRoles)) {
+                foreach($diff as $userId => $role) {
+                    Yii::$app->projectService->assignRole($model, User::findOne($userId), $role);
+                }
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -105,6 +112,11 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * @param Project $model
+     * @return bool
+     * @throws \yii\base\InvalidConfigException
+     */
     private function loadModel(Project $model) {
         $data = Yii::$app->request->post($model->formName());
         $projectUsers = $data[Project::RELATION_PROJECT_USERS];
@@ -120,8 +132,10 @@ class ProjectController extends Controller
      * Deletes an existing Project model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
