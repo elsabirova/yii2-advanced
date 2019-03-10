@@ -46,6 +46,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     const SCENARIO_CREATE = 'create';
     const SCENARIO_UPDATE = 'update';
+    const SCENARIO_PROFILE = 'profile';
 
     const AVATAR_PREVIEW    = 'preview';
     const AVATAR_ICO        = 'ico';
@@ -75,7 +76,7 @@ class User extends ActiveRecord implements IdentityInterface
             [
                 'class' => UploadImageBehavior::class,
                 'attribute' => 'avatar',
-                'scenarios' => [self::SCENARIO_UPDATE],
+                'scenarios' => [self::SCENARIO_UPDATE, self::SCENARIO_PROFILE],
                 'placeholder' => '@frontend/web/img/avatar.png',
                 'path' => '@frontend/web/upload/user/{id}',
                 'url' => Yii::$app->params['hosts.frontend'] . Yii::getAlias('@web/upload/user/{id}'),
@@ -94,12 +95,12 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['username', 'email', 'password'], 'required', 'on' => self::SCENARIO_CREATE],
-            [['username', 'email'], 'required', 'on' => self::SCENARIO_UPDATE],
+            [['username', 'email'], 'required', 'on' => [self::SCENARIO_UPDATE, self::SCENARIO_PROFILE]],
             ['email', 'email'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => self::STATUSES],
             [['username', 'auth_key', 'password'], 'string', 'max' => 255],
-            ['avatar', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => self::SCENARIO_UPDATE],
+            ['avatar', 'image', 'extensions' => 'jpg, jpeg, gif, png', 'on' => [self::SCENARIO_UPDATE, self::SCENARIO_PROFILE]],
         ];
     }
 

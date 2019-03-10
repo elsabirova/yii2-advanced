@@ -43,7 +43,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status'], 'integer'],
-            [['username', 'email', 'created_at', 'updated_at'], 'safe'],
+            [['username', 'email'], 'safe'],
             [['created_at', 'updated_at'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
         ];
     }
