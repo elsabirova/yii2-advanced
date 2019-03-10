@@ -57,6 +57,10 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                //'<controller:(user|project)>s' => '<controller>/index',
+                '<controller:[\w-]+>s'          => '<controller>/index',
+                '<controller:[\w-]+>/<id:\d+>'  => '<controller>/view',
+                '<controller:[\w-]+>/<action:(update|delete)>/<id:\d+>' => '<controller>/<action>',
             ],
         ],
     ],
