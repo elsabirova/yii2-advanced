@@ -14,6 +14,9 @@ return [
             'dateFormat' => 'php:d-m-Y',
             'datetimeFormat' => 'php:d-m-Y H:i'
         ],
+        'taskService' => [
+            'class' => \common\services\TaskService::class,
+        ],
         'projectService' => [
             'class' => \common\services\ProjectService::class,
             'on ' . \common\services\ProjectService::EVENT_ASSIGN_ROLE => function(\common\services\AssignRoleEvent $e) {

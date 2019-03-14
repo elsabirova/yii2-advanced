@@ -1,14 +1,15 @@
 <?php
-
 namespace frontend\controllers;
 
 use Yii;
 use common\models\Task;
+use common\models\ProjectUser;
+use common\models\query\TaskQuery;
 use frontend\models\search\TaskSearch;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * TaskController implements the CRUD actions for Task model.
@@ -31,8 +32,55 @@ class TaskController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
+                        'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['view'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            $task = Task::findOne(Yii::$app->request->get('id'));
+
+                            return Yii::$app->projectService->isProjectAvailable(Yii::$app->user->identity, $task->project);
+                        },
+                    ],
+                    [
+                        'actions' => ['create'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            return Yii::$app->taskService->canManage(Yii::$app->user->identity);
+                        }
+                    ],
+                    [
+                        'actions' => ['update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            $project = Task::findOne(Yii::$app->request->get('id'))->project;
+                            return Yii::$app->taskService->canManage(Yii::$app->user->identity, $project);
+                        }
+                    ],
+                    [
+                        'actions' => ['take'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            $task = Task::findOne(Yii::$app->request->get('id'));
+                            $project = $task->project;
+                            return Yii::$app->taskService->canTake(Yii::$app->user->identity, $project, $task);
+                        }
+                    ],
+                    [
+                        'actions' => ['complete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            $task = Task::findOne(Yii::$app->request->get('id'));
+                            return Yii::$app->taskService->canComplete(Yii::$app->user->identity, $task);
+                        }
                     ],
                 ],
             ],
@@ -47,6 +95,11 @@ class TaskController extends Controller
     {
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        /* @var $query TaskQuery */
+        $query = $dataProvider->query;
+        $query = $query->byUser(Yii::$app->user->identity->id);
+        $dataProvider->query = $query;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -82,6 +135,7 @@ class TaskController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'projectsNames' => Yii::$app->projectService->getAvailableProjects(Yii::$app->user->identity, ProjectUser::ROLE_MANAGER, true),
         ]);
     }
 
@@ -102,6 +156,7 @@ class TaskController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'projectsNames' => Yii::$app->projectService->getAvailableProjects(Yii::$app->user->identity, ProjectUser::ROLE_MANAGER, true),
         ]);
     }
 
@@ -117,6 +172,32 @@ class TaskController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionTake($id) {
+        $model = $this->findModel($id);
+        if(Yii::$app->taskService->takeTask($model, Yii::$app->user->identity)) {
+            Yii::$app->session->setFlash('success', 'Task is picked successfully');
+            return $this->redirect(['view', 'id' => $id]);
+        }
+    }
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionComplete($id) {
+        $model = $this->findModel($id);
+        if(Yii::$app->taskService->completeTask($model)) {
+            Yii::$app->session->setFlash('success', 'Task is completed successfully');
+            return $this->redirect(['view', 'id' => $id]);
+        }
     }
 
     /**

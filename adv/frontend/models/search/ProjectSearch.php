@@ -1,7 +1,7 @@
 <?php
-
 namespace frontend\models\search;
 
+use kartik\daterange\DateRangeBehavior;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Project;
@@ -11,14 +11,39 @@ use common\models\Project;
  */
 class ProjectSearch extends Project
 {
+    public $createTimeStart;
+    public $createTimeEnd;
+
+    public $updatedTimeStart;
+    public $updatedTimeEnd;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'created_at',
+                'dateStartAttribute' => 'createTimeStart',
+                'dateEndAttribute' => 'createTimeEnd',
+            ],
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'updated_at',
+                'dateStartAttribute' => 'updatedTimeStart',
+                'dateEndAttribute' => 'updatedTimeEnd',
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'active', 'creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'active', 'creator_id', 'updater_id'], 'integer'],
             [['title', 'description'], 'safe'],
+            [['created_at', 'updated_at'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
         ];
     }
 
@@ -62,12 +87,12 @@ class ProjectSearch extends Project
             'active' => $this->active,
             'creator_id' => $this->creator_id,
             'updater_id' => $this->updater_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['like', 'description', $this->description])
+            ->andFilterWhere(['between', 'created_at', $this->createTimeStart, $this->createTimeEnd])
+            ->andFilterWhere(['between', 'updated_at', $this->updatedTimeStart, $this->updatedTimeEnd]);
 
         return $dataProvider;
     }

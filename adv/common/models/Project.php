@@ -85,8 +85,9 @@ class Project extends \yii\db\ActiveRecord
     {
         return [
             'title' => 'Name',
-            'creator.username' => 'Creator',
-            'updater.username' => 'Updater',
+            'role' => 'My roles',
+            Project::RELATION_CREATOR . '.username' => 'Creator',
+            Project::RELATION_UPDATER . '.username' => 'Updater',
             'created_at' => 'Created at',
             'updated_at' => 'Updated at',
         ];

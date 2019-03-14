@@ -2,6 +2,7 @@
 
 namespace frontend\models\search;
 
+use kartik\daterange\DateRangeBehavior;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Task;
@@ -11,14 +12,57 @@ use common\models\Task;
  */
 class TaskSearch extends Task
 {
+    public $createTimeStart;
+    public $createTimeEnd;
+
+    public $updatedTimeStart;
+    public $updatedTimeEnd;
+
+    public $startedTimeStart;
+    public $startedTimeEnd;
+
+    public $completedTimeStart;
+    public $completedTimeEnd;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'created_at',
+                'dateStartAttribute' => 'createTimeStart',
+                'dateEndAttribute' => 'createTimeEnd',
+            ],
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'updated_at',
+                'dateStartAttribute' => 'updatedTimeStart',
+                'dateEndAttribute' => 'updatedTimeEnd',
+            ],
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'started_at',
+                'dateStartAttribute' => 'startedTimeStart',
+                'dateEndAttribute' => 'startedTimeEnd',
+            ],
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'completed_at',
+                'dateStartAttribute' => 'completedTimeStart',
+                'dateEndAttribute' => 'completedTimeEnd',
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'project_id', 'executor_id', 'started_at', 'completed_at', 'creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'project_id', 'executor_id', 'creator_id', 'updater_id'], 'integer'],
             [['title', 'description'], 'safe'],
+            [['created_at', 'updated_at', 'started_at', 'completed_at'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
         ];
     }
 
@@ -59,18 +103,18 @@ class TaskSearch extends Task
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'project_id' => $this->project_id,
+            'task.project_id' => $this->project_id,
             'executor_id' => $this->executor_id,
-            'started_at' => $this->started_at,
-            'completed_at' => $this->completed_at,
-            'creator_id' => $this->creator_id,
-            'updater_id' => $this->updater_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'task.creator_id' => $this->creator_id,
+            'task.updater_id' => $this->updater_id,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['like', 'description', $this->description])
+            ->andFilterWhere(['between', 'task.created_at', $this->createTimeStart, $this->createTimeEnd])
+            ->andFilterWhere(['between', 'task.updated_at', $this->updatedTimeStart, $this->updatedTimeEnd])
+            ->andFilterWhere(['between', 'task.started_at', $this->startedTimeStart, $this->startedTimeEnd])
+            ->andFilterWhere(['between', 'task.completed_at', $this->completedTimeStart, $this->completedTimeEnd]);
 
         return $dataProvider;
     }

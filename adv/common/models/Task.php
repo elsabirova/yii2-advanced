@@ -23,6 +23,7 @@ use yii\behaviors\TimestampBehavior;
  * @property User $executor
  * @property User $updater
  * @property Project $project
+ * @property ProjectUser[] $projectUsers
  */
 class Task extends \yii\db\ActiveRecord
 {
@@ -30,6 +31,7 @@ class Task extends \yii\db\ActiveRecord
     const RELATION_UPDATER  = 'updater';
     const RELATION_EXECUTOR = 'executor';
     const RELATION_PROJECT  = 'project';
+    const RELATION_PROJECT_USERS    = 'projectUsers';
     
     /**
      * {@inheritdoc}
@@ -72,17 +74,18 @@ class Task extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'project_id' => 'Project ID',
-            'executor_id' => 'Executor ID',
-            'started_at' => 'Started At',
-            'completed_at' => 'Completed At',
-            'creator_id' => 'Creator ID',
-            'updater_id' => 'Updater ID',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'project_id' => 'Project',
+            Task::RELATION_PROJECT . '.title' => 'Project name',
+            'executor_id' => 'Executor',
+            Task::RELATION_EXECUTOR . '.username' => 'Executor',
+            'started_at' => 'Started at',
+            'completed_at' => 'Completed at',
+            'creator_id' => 'Creator',
+            Task::RELATION_CREATOR . '.username' => 'Creator',
+            'updater_id' => 'Updater',
+            Task::RELATION_UPDATER . '.username' => 'Updater',
+            'created_at' => 'Created at',
+            'updated_at' => 'Updated at',
         ];
     }
 
@@ -116,6 +119,15 @@ class Task extends \yii\db\ActiveRecord
     public function getProject()
     {
         return $this->hasOne(Project::class, ['id' => 'project_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProjectUsers()
+    {
+        return $this->hasMany(ProjectUser::class, ['project_id' => 'id'])
+            ->via(Task::RELATION_PROJECT);
     }
 
     /**
