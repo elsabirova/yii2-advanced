@@ -1,5 +1,4 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
@@ -78,6 +77,7 @@ class UserController extends Controller
         $model->setScenario(User::SCENARIO_CREATE);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'User is created successfully');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -99,6 +99,7 @@ class UserController extends Controller
         $model->setScenario(User::SCENARIO_UPDATE);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'User is updated successfully');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -118,6 +119,7 @@ class UserController extends Controller
         $model->setScenario(User::SCENARIO_PROFILE);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Profile is updated successfully');
             return $this->redirect(['profile']);
         }
 
@@ -125,6 +127,7 @@ class UserController extends Controller
             'model' => $model,
         ]);
     }
+
 
     /**
      * Deletes an existing User model.
@@ -135,7 +138,11 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $result = $this->findModel($id)->delete();
+
+        if ($result) {
+            Yii::$app->session->setFlash('success', 'User is deleted successfully');
+        }
 
         return $this->redirect(['index']);
     }

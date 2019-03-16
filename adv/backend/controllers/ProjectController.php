@@ -84,6 +84,7 @@ class ProjectController extends Controller
         $model = new Project();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Project is created successfully');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -112,6 +113,8 @@ class ProjectController extends Controller
                     Yii::$app->projectService->assignRole($model, User::findOne($userId), $role);
                 }
             }
+
+            Yii::$app->session->setFlash('success', 'Project is updated successfully');
 
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -149,7 +152,11 @@ class ProjectController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $result = $this->findModel($id)->delete();
+
+        if ($result) {
+            Yii::$app->session->setFlash('success', 'Project is deleted successfully');
+        }
 
         return $this->redirect(['index']);
     }

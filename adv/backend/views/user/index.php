@@ -24,7 +24,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             'id',
-            'username',
+            [
+                'attribute' => 'username',
+                'format' => 'html',
+                'value' => function (User $model) {
+                    return Html::a($model->username, ['view', 'id' => $model->id]);
+                }
+            ],
             'email:email',
             [
                 'attribute' => 'avatar',
@@ -44,9 +50,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'created_at',
                 'format' => ['datetime'],
                 'filter' =>  DateRangePicker::widget([
+                    //http://demos.krajee.com/date-range
                     'model'=>$searchModel,
                     'attribute'=>'created_at',
-                    'presetDropdown'=>true,
                     'hideInput'=>true,
                     'convertFormat'=>true,
                     'pluginOptions'=>[
@@ -60,9 +66,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'updated_at',
                 'format' => ['datetime'],
                 'filter' =>  DateRangePicker::widget([
+                    //http://demos.krajee.com/date-range
                     'model'=>$searchModel,
                     'attribute'=>'updated_at',
-                    'presetDropdown'=>true,
                     'hideInput'=>true,
                     'convertFormat'=>true,
                     'pluginOptions'=>[

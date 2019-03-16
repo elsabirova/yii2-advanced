@@ -60,7 +60,7 @@ return [
                 //'<controller:(user|project)>s' => '<controller>/index',
                 '<controller:[\w-]+>s'          => '<controller>/index',
                 '<controller:[\w-]+>/<id:\d+>'  => '<controller>/view',
-                '<controller:[\w-]+>/<action:(update|delete)>/<id:\d+>' => '<controller>/<action>',
+                '<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>' => '<controller>/<action>',
             ],
         ],
     ],

@@ -36,12 +36,30 @@ $this->params['breadcrumbs'][] = $this->title;
             'description:ntext',
             [
                 'attribute' => 'active',
-                'value' => function(Project $model) {
+                'value' => function (Project $model) {
                     return Project::STATUS_LABELS[$model->active];
                 }
             ],
-            'creator.username',
-            'updater.username',
+            [
+                'attribute' => Project::RELATION_CREATOR . '.username',
+                'format' => 'html',
+                'value' => function (Project $model) {
+                    if ($model->creator) {
+                        return Html::a($model->creator->username, ['user/view', 'id' => $model->creator->id]);
+                    }
+                    return null;
+                }
+            ],
+            [
+                'attribute' => Project::RELATION_UPDATER . '.username',
+                'format' => 'html',
+                'value' => function (Project $model) {
+                    if ($model->updater) {
+                        return Html::a($model->updater->username, ['user/view', 'id' => $model->updater->id]);
+                    }
+                    return null;
+                }
+            ],
             'created_at:datetime',
             'updated_at:datetime',
         ],
@@ -52,24 +70,22 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            'user.username',
+            [
+                'attribute' => ProjectUser::RELATION_USER . '.username',
+                'format' => 'html',
+                'value' => function (ProjectUser $model) {
+                    return Html::a($model->user->username, ['user/view', 'id' => $model->user->id]);
+                }
+            ],
             [
                 'attribute' => 'avatar',
                 'format' => 'html',
-                'value' => function(ProjectUser $model) {
+                'value' => function (ProjectUser $model) {
                     return Html::img($model->user->getThumbUploadUrl('avatar', User::AVATAR_ICO), ['class' => 'img-thumbnail']);
                 }
             ],
             'role',
             'user.email:email',
-            [
-                'attribute' => 'status',
-                'value' => function(ProjectUser $model) {
-                    return User::STATUS_LABELS[$model->user->status];
-                }
-            ],
-            'user.created_at:datetime',
-            'user.updated_at:datetime'
         ],
     ]); ?>
 

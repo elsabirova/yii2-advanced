@@ -25,7 +25,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             'id',
-            'title',
+            [
+                'attribute' => 'title',
+                'format' => 'html',
+                'value' => function (Project $model) {
+                    return Html::a($model->title, ['view', 'id' => $model->id]);
+                }
+            ],
             'description:ntext',
             [
                 'attribute' => 'active',
@@ -34,8 +40,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Project::STATUS_LABELS[$model->active];
                 }
             ],
-            'creator.username',
-            'updater.username',
+            [
+                'attribute' => Project::RELATION_CREATOR . '.username',
+                'format' => 'html',
+                'value' => function (Project $model) {
+                    if ($model->creator) {
+                        return Html::a($model->creator->username, ['user/view', 'id' => $model->creator->id]);
+                    }
+                    return null;
+                }
+            ],
+            [
+                'attribute' => Project::RELATION_UPDATER. '.username',
+                'format' => 'html',
+                'value' => function (Project $model) {
+                    if ($model->updater) {
+                        return Html::a($model->updater->username, ['user/view', 'id' => $model->updater->id]);
+                    }
+                    return null;
+                }
+            ],
             [
                 'attribute' => 'created_at',
                 'format' => ['datetime'],
@@ -43,7 +67,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     //http://demos.krajee.com/date-range
                     'model'=>$searchModel,
                     'attribute'=>'created_at',
-                    'presetDropdown'=>true,
                     'hideInput'=>true,
                     'convertFormat'=>true,
                     'pluginOptions'=>[
@@ -60,7 +83,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     //http://demos.krajee.com/date-range
                     'model'=>$searchModel,
                     'attribute'=>'updated_at',
-                    'presetDropdown'=>true,
                     'hideInput'=>true,
                     'convertFormat'=>true,
                     'pluginOptions'=>[

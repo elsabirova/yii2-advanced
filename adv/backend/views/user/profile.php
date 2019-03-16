@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 
-$this->title = 'Profile: ' . $model->username;
+$this->title = 'Profile';
 $this->params['breadcrumbs'][] = 'Profile';
 ?>
 <div class="user-profile">

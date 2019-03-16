@@ -77,11 +77,13 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Task is created successfully');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'projectsNames' => Yii::$app->projectService->getActiveProjects(),
         ]);
     }
 
@@ -97,11 +99,13 @@ class TaskController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Task is updated successfully');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'projectsNames' => Yii::$app->projectService->getActiveProjects(),
         ]);
     }
 
@@ -109,14 +113,44 @@ class TaskController extends Controller
      * Deletes an existing Task model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $result = $this->findModel($id)->delete();
+
+        if ($result) {
+            Yii::$app->session->setFlash('success', 'Task is deleted successfully');
+        }
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionTake($id) {
+        $model = $this->findModel($id);
+        Yii::$app->taskService->takeTask($model, Yii::$app->user->identity);
+
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionComplete($id) {
+        $model = $this->findModel($id);
+        Yii::$app->taskService->completeTask($model, Yii::$app->user->identity);
+
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     /**
