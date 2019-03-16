@@ -1,5 +1,7 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
+use common\models\ProjectUser;
 
 /* @var $this yii\web\View */
 /* @var $user common\models\User */
@@ -7,8 +9,9 @@ use yii\helpers\Html;
 /* @var $role string */
 ?>
 
-<div class="password-reset">
+<div>
     <p>Hello <?= Html::encode($user->username) ?>,</p>
 
-    <p>You are assigned the role <?= Html::encode($role) ?> in the project <?= Html::encode($project->title) ?></p>
+    <p>You are assigned the role <?= Html::encode(ProjectUser::ROLE_LABELS[$role]) ?>
+        in the project <?= Html::a($project->title, Url::to(['project/view', 'id' => $project->id], true)) ?></p>
 </div>

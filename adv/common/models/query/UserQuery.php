@@ -18,10 +18,10 @@ class UserQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @param $userId
+     * @param int $userId
      * @return UserQuery
      */
-    public function workInProjectsWithUser($userId)
+    public function workInProjectsWithUser(int $userId)
     {
         $userProjects = ProjectUser::find()->select('project_id')->andWhere(['user_id' => $userId]);
 
@@ -30,13 +30,29 @@ class UserQuery extends \yii\db\ActiveQuery
     }
 
     /**
-     * @param string $role
+     * @param int $projectId
+     * @return UserQuery
+     */
+    public function byProject(int $projectId)
+    {
+        return $this->innerJoinWith(User::RELATION_PROJECT_USERS)->andWhere(['project_id' => $projectId]);
+    }
+
+    /**
+     * @param string|array $roles
      * @param bool $joinProjectUser
      * @return UserQuery
      */
-    public function byRole(string $role, $joinProjectUser = true)
+    public function byRole($roles, $joinProjectUser = true)
     {
-        $result = $this->andWhere(['role' => $role]);
+        if(is_array($roles)) {
+            $where = "role = '" . implode("' or role = '", $roles) . "'";
+            $result = $this->andWhere($where);
+        }
+        else {
+            $result = $this->andWhere(['role' => $roles]);
+        }
+
         if($joinProjectUser) {
             $result = $result->innerJoinWith(User::RELATION_PROJECT_USERS);
         }

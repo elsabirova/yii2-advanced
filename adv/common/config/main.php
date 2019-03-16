@@ -2,7 +2,7 @@
 return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
@@ -16,10 +16,16 @@ return [
         ],
         'taskService' => [
             'class' => \common\services\TaskService::class,
+            'on ' . \common\services\TaskService::EVENT_AFTER_TAKE_TASK => function (\common\services\AfterTakeTaskEvent $e) {
+                Yii::$app->notificationService->sendInfoAboutTakeTask($e->task, $e->project, $e->developer, $e->receivers);
+            },
+            'on ' . \common\services\TaskService::EVENT_AFTER_COMPLETE_TASK => function (\common\services\AfterCompleteTaskEvent $e) {
+                Yii::$app->notificationService->sendInfoAboutCompleteTask($e->task, $e->project, $e->developer, $e->receivers);
+            },
         ],
         'projectService' => [
             'class' => \common\services\ProjectService::class,
-            'on ' . \common\services\ProjectService::EVENT_ASSIGN_ROLE => function(\common\services\AssignRoleEvent $e) {
+            'on ' . \common\services\ProjectService::EVENT_ASSIGN_ROLE => function (\common\services\AssignRoleEvent $e) {
                 Yii::$app->notificationService->sendInfoAboutNewRole($e->project, $e->user, $e->role);
             }
         ],
