@@ -49,6 +49,7 @@ class User extends ActiveRecord implements IdentityInterface
     const SCENARIO_PROFILE = 'profile';
 
     const AVATAR_PREVIEW    = 'preview';
+    const AVATAR_COMMENT    = 'comment';
     const AVATAR_ICO        = 'ico';
 
     const RELATION_CREATED_TASKS    = 'createdTasks';
@@ -82,6 +83,7 @@ class User extends ActiveRecord implements IdentityInterface
                 'url' => Yii::$app->params['hosts.frontend'] . Yii::getAlias('@web/upload/user/{id}'),
                 'thumbs' => [
                     self::AVATAR_ICO => ['width' => 30, 'quality' => 90],
+                    self::AVATAR_COMMENT => ['width' => 50, 'quality' => 90],
                     self::AVATAR_PREVIEW => ['width' => 160, 'height' => 160],
                 ],
             ],
@@ -323,5 +325,10 @@ class User extends ActiveRecord implements IdentityInterface
     public static function find()
     {
         return new \common\models\query\UserQuery(get_called_class());
+    }
+
+    public function getAvatar()
+    {
+        return $this->getThumbUploadUrl('avatar', self::AVATAR_COMMENT);
     }
 }

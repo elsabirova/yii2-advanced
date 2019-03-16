@@ -95,4 +95,17 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <?php echo \yii2mod\comments\widgets\Comment::widget([
+        'model' => $model,
+        'relatedTo' => 'User ' . \Yii::$app->user->identity->username . ' commented on the page ' . \yii\helpers\Url::current(),
+        'dataProviderConfig' => [
+            'pagination' => [
+                'pageSize' => 10
+            ],
+        ],
+        'listViewConfig' => [
+            'emptyText' => Yii::t('app', 'No comments found.'),
+        ],
+    ]); ?>
+
 </div>

@@ -35,10 +35,21 @@ return [
         'notificationService' => [
             'class' => \common\services\NotificationService::class,
         ],
+        'i18n' => [
+            'translations' => [
+                'yii2mod.comments' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@yii2mod/comments/messages',
+                ],
+            ],
+        ],
     ],
     'modules' => [
         'chat' => [
             'class' => common\modules\chat\Module::class,
+        ],
+        'comment' => [
+            'class' => yii2mod\comments\Module::class,
         ],
     ],
 ];
