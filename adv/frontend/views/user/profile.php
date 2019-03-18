@@ -7,7 +7,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $model common\models\User */
 /* @var $form yii\widgets\ActiveForm */
 
-$this->title = 'Profile: ' . $model->username;
+$this->title = 'Profile';
 $this->params['breadcrumbs'][] = 'Profile';
 ?>
 
@@ -23,6 +23,8 @@ $this->params['breadcrumbs'][] = 'Profile';
                     ['label' => 'col-sm-2',]
             ],
         ]); ?>
+
+        <h1><?= Html::encode($this->title) ?></h1>
 
         <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
 

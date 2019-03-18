@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $model common\models\Task */
 /* @var $projectsNames array */
 
-$this->title = 'Create Task';
+$this->title = 'Create task';
 $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
