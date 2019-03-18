@@ -49,7 +49,7 @@ class TaskController extends Controller
                     [
                         'actions' => ['create'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['manager'],
                         'matchCallback' => function () {
                             return Yii::$app->taskService->canManage(Yii::$app->user->identity);
                         }
@@ -57,7 +57,7 @@ class TaskController extends Controller
                     [
                         'actions' => ['update', 'delete'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['manager'],
                         'matchCallback' => function () {
                             $project = Task::findOne(Yii::$app->request->get('id'))->project;
                             return Yii::$app->taskService->canManage(Yii::$app->user->identity, $project);
@@ -66,7 +66,7 @@ class TaskController extends Controller
                     [
                         'actions' => ['take'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['developer'],
                         'matchCallback' => function () {
                             $task = Task::findOne(Yii::$app->request->get('id'));
                             $project = $task->project;
@@ -76,7 +76,7 @@ class TaskController extends Controller
                     [
                         'actions' => ['complete'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['developer'],
                         'matchCallback' => function () {
                             $task = Task::findOne(Yii::$app->request->get('id'));
                             return Yii::$app->taskService->canComplete(Yii::$app->user->identity, $task);

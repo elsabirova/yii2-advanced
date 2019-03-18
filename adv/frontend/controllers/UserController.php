@@ -1,5 +1,4 @@
 <?php
-
 namespace frontend\controllers;
 
 use Yii;
@@ -78,6 +77,7 @@ class UserController extends Controller
         $model->setScenario(User::SCENARIO_PROFILE);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Profile is updated successfully');
             return $this->redirect(['profile']);
         }
 

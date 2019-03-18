@@ -46,7 +46,7 @@ class LoginForm extends Model
                 $this->addError($attribute, 'Incorrect username or password.');
             }
 
-            if($user && isset(Yii::$app->params['admins']) && !in_array($user->id, Yii::$app->params['admins'])) {
+            if($user && !Yii::$app->user->can('adminAccess')) {
                 $this->addError($attribute, 'Access denied.');
             }
         }

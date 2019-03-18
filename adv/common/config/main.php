@@ -43,6 +43,10 @@ return [
                 ],
             ],
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            'cache' => 'cache'
+        ],
     ],
     'modules' => [
         'chat' => [
