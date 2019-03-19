@@ -36,7 +36,7 @@ class ProjectController extends Controller
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['view'],
+                        'actions' => ['view', 'chat'],
                         'allow' => true,
                         'roles' => ['@'],
                         'matchCallback' => function () {
@@ -84,6 +84,20 @@ class ProjectController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionChat($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('chat',[
+            'model' => $model,
         ]);
     }
 

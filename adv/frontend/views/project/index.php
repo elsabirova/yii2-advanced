@@ -98,7 +98,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view}',
+                'template' => '{chat} {view}',
+                'buttons' => [
+                    'chat' => function ($url, Project $model) {
+                        $icon = \yii\bootstrap\Html::icon('envelope');
+                        $url = ['project/chat', 'id' => $model->id];
+
+                        return Html::a($icon, $url);
+                    },
+                ],
             ],
         ],
     ]); ?>
