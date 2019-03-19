@@ -1,12 +1,15 @@
 <?php
 namespace common\modules\chat\components;
 
+use Yii;
+use common\models\User;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 use yii\base\Component;
 
 class Chat extends Component implements MessageComponentInterface {
     protected $clients;
+    public $projects;
 
     public function __construct() {
         $this->clients = new \SplObjectStorage;
@@ -24,11 +27,40 @@ class Chat extends Component implements MessageComponentInterface {
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
             , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
 
-        foreach ($this->clients as $client) {
-            //if ($from !== $client) {
-                // The sender is not the receiver, send to each client connected
-                $client->send($msg);
-           // }
+        $data = json_decode($msg);
+        if(isset($data->setProjectId)) {
+            $this->projects[$from->resourceId] = $data->setProjectId;
+        } else {
+            $date = time();
+            $data->date = date("d-m-Y  H:i:s", $date);
+            Yii::$app->db->open();
+
+            $modelUser = User::findOne($data->authorId);
+            $chat = new \common\models\Chat([
+                'message' => $data->msg,
+                'author_id' => $data->authorId,
+                'project_id' => $data->projectId,
+                'created_at' => $date,
+            ]);
+            $chat->save();
+
+            Yii::$app->db->close();
+
+            $data->avatar = $modelUser->getThumbUploadUrl('avatar', User::AVATAR_COMMENT);
+
+            foreach ($this->clients as $client) {
+                // The sender is the receiver
+                if ($from === $client) {
+                    $data->author = 'Me';
+                }
+                else {
+                    $data->author = $modelUser->username;
+                }
+                //Send to clients with the same project
+                if($this->projects[$client->resourceId] == $data->projectId) {
+                    $client->send(json_encode($data));
+                }
+            }
         }
     }
 

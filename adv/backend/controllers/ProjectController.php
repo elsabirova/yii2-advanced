@@ -162,6 +162,20 @@ class ProjectController extends Controller
     }
 
     /**
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionChat($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->render('chat',[
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Finds the Project model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
