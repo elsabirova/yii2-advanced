@@ -27,7 +27,8 @@
         "la-haute-societe/yii2-save-relations-behavior": "*",
         "unclead/yii2-multiple-input": "~2.0",
         "yii2mod/yii2-comments": "*",
-        "mdmsoft/yii2-admin": "~2.0"
+        "mdmsoft/yii2-admin": "~2.0",
+        "yiisoft/yii2-authclient": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

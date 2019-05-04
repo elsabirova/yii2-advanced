@@ -23,6 +23,7 @@ use mohorev\file\UploadImageBehavior;
  * @property integer $updated_at
  * @property string $password
  *
+ * @property Auth[] $auths
  * @property Task[] $createdTasks
  * @property Task[] $updatedTasks
  * @property Task[] $executableTasks
@@ -270,6 +271,14 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     //Relations
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAuths()
+    {
+        return $this->hasMany(Auth::class, ['user_id' => 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

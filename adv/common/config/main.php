@@ -47,6 +47,27 @@ return [
             'class' => 'yii\rbac\DbManager',
             'cache' => 'cache'
         ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'google' => [
+                    'class' => yii\authclient\clients\Google::class,
+                    'clientId' => '49068433203-uaem0r5m4iprjmn961ufs2svbs2m82sa.apps.googleusercontent.com',
+                    'clientSecret' => '7P7Y8Z8mGGojyNYJKcEmMfJh',
+                ],
+                'facebook' => [
+                    'class' => yii\authclient\clients\Facebook::class,
+                    'clientId' => '405066390075438',
+                    'clientSecret' => 'a2b9b13224e8a423eab2b75088423ba6',
+                ],
+                'vkontakte' => [
+                    'class' => 'yii\authclient\clients\VKontakte',
+                    'clientId' => '6970697',
+                    'clientSecret' => '3MJdjC4qpIkdebu4U6nh',
+                    'scope' => ['email']
+                ],
+            ],
+        ]
     ],
     'modules' => [
         'chat' => [
